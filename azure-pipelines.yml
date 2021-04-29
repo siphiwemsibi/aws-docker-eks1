@@ -1,0 +1,55 @@
+# Author: Siphiwe Msibi(siphiwe.msibi@live.com)
+# An Azure Pipeline that dockerizes an application and deploys it to AWS EKS
+# Requires: AWS K8S service connection, AWS Auth service connection and ECR ID, AWS Region
+
+trigger:
+- master
+
+resources:
+- repo: self
+
+variables:
+  tag: '$(Build.BuildNumber)'
+
+stages:
+- stage: Build
+  displayName: Build Docker Image and push to ECR
+  jobs:
+  - job: Build
+    displayName: Build
+    pool:
+      vmImage: ubuntu-latest
+    steps:
+    - task: AWSShellScript@1
+      displayName: Build and tag an image using the Dockerfile
+      inputs:
+        awsCredentials: 'AWS-Connection-1'
+        regionName: '$(AWS_REGION)'
+        scriptType: 'inline'
+        inlineScript: |
+          # Build, tag and push docker image to ECR
+      
+          aws ecr get-login-password --region $(AWS_REGION) | docker login --username AWS --password-stdin $(ECR_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
+                
+          docker build -t $(Build.Repository.Name):$(Build.BuildNumber) -f $(Build.SourcesDirectory)/Dockerfile .
+                
+          docker tag $(Build.Repository.Name):$(Build.BuildNumber) $(ECR_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(Build.Repository.Name):$(Build.BuildNumber)
+          # Just for troubleshooting, this can be removed or indented       
+          docker images
+
+    - task: ECRPushImage@1
+      displayName: Push the image to the AWS ECR
+      inputs:
+        awsCredentials: 'AWS-Connection-1'
+        regionName: '$(AWS_Region)'
+        imageSource: 'imagename'
+        sourceImageName: '$(Build.Repository.Name)'
+        sourceImageTag: '$(Build.BuildNumber)'
+        repositoryName: '$(Build.Repository.Name)'
+        pushTag: '$(Build.BuildNumber)'
+
+    # - task: CopyFiles@2
+    #   displayName: Copy application yaml files for release stage
+    #   inputs:
+    #     Contents: '**yaml'
+    #     TargetFolder: '$(build.artifactstagingdirectory)'
