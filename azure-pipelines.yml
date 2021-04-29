@@ -49,9 +49,15 @@ stages:
         pushTag: '$(Build.BuildNumber)'
         autoCreateRepository: true
 
-    # - task: CopyFiles@2
-    #   displayName: Copy application yaml files for release stage
-    #   inputs:
-    #     Contents: '**yaml'
-    #     TargetFolder: '$(build.artifactstagingdirectory)'
+    - task: CopyFiles@2
+      displayName: Copy application yaml files to the artifacts for release stage
+      inputs:
+        Contents: '**yaml'
+        TargetFolder: '$(build.artifactstagingdirectory)'
     
+    - task: PublishBuildArtifacts@1
+      displayName: Place the artifacts to the 
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'drop'
+        publishLocation: 'Container'
