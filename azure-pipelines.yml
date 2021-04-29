@@ -48,6 +48,7 @@ stages:
         repositoryName: '$(Build.Repository.Name)'
         pushTag: '$(Build.BuildNumber)'
         autoCreateRepository: true
+        forceDockerNamingConventions: true
 
     - task: CopyFiles@2
       displayName: Copy application yaml files to the artifacts for release stage
