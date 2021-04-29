@@ -47,9 +47,11 @@ stages:
         sourceImageTag: '$(Build.BuildNumber)'
         repositoryName: '$(Build.Repository.Name)'
         pushTag: '$(Build.BuildNumber)'
+        autoCreateRepository: true
 
     # - task: CopyFiles@2
     #   displayName: Copy application yaml files for release stage
     #   inputs:
     #     Contents: '**yaml'
     #     TargetFolder: '$(build.artifactstagingdirectory)'
+    
