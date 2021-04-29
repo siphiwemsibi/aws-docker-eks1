@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deployment-sip-python
+spec:
+  selector:
+    matchLabels:
+      app: sip-python
+  replicas: 1 # tells deployment to run 2 pods matching the template
+  template:
+    metadata:
+      labels:
+        app: sip-python 
+    spec:
+      containers:
+      - name: sip-python
+        image: $(ECR_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(Build.Repository.Name):$(Build.BuildNumber)
+        ports:
+        - containerPort: 80
