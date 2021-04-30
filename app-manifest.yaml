@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
       - name: sip-python
-        image: sip-python
-       # image: $(ECR_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/siphiwemsibi/aws-docker-eks1:$(Build.BuildNumber)
+        #image: sip-python
+        image: $(ECR_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/siphiwemsibi/aws-docker-eks1:$(Build.BuildNumber)
         ports:
         - containerPort: 80
