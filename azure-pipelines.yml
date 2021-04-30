@@ -20,45 +20,53 @@ stages:
     pool:
       vmImage: ubuntu-latest
     steps:
-    - task: AWSShellScript@1
-      displayName: Build and tag an image using the Dockerfile
-      inputs:
-        awsCredentials: 'AWS-Connection-1'
-        regionName: '$(AWS_REGION)'
-        scriptType: 'inline'
-        inlineScript: |
-          # Build, tag and push docker image to ECR
+#     - task: AWSShellScript@1
+#       displayName: Build and tag an image using the Dockerfile
+#       inputs:
+#         awsCredentials: 'AWS-Connection-1'
+#         regionName: '$(AWS_REGION)'
+#         scriptType: 'inline'
+#         inlineScript: |
+#           # Build, tag and push docker image to ECR
       
-          aws ecr get-login-password --region $(AWS_REGION) | docker login --username AWS --password-stdin $(ECR_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
+#           aws ecr get-login-password --region $(AWS_REGION) | docker login --username AWS --password-stdin $(ECR_ID).dkr.ecr.$(AWS_REGION).amazonaws.com
                 
-          docker build -t $(Build.Repository.Name):$(Build.BuildNumber) -f $(Build.SourcesDirectory)/Dockerfile .
+#           docker build -t $(Build.Repository.Name):$(Build.BuildNumber) -f $(Build.SourcesDirectory)/Dockerfile .
                 
-          docker tag $(Build.Repository.Name):$(Build.BuildNumber) $(ECR_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(Build.Repository.Name):$(Build.BuildNumber)
-          # Just for troubleshooting, this can be removed or indented       
-          docker images
+#           docker tag $(Build.Repository.Name):$(Build.BuildNumber) $(ECR_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/$(Build.Repository.Name):$(Build.BuildNumber)
+#           # Just for troubleshooting, this can be removed or indented       
+#           docker images
+      - task: Bash@3   
+        inputs:
+         targetType: 'inline'
+         script: 
+         # Write your commands here
+      
+           echo 'Hello world'
+           echo build no is $(Build.BuildNumber)
+           echo build no is $(Build.Repository.Name)
+#     - task: ECRPushImage@1
+#       displayName: Push the image to the AWS ECR
+#       inputs:
+#         awsCredentials: 'AWS-Connection-1'
+#         regionName: '$(AWS_Region)'
+#         imageSource: 'imagename'
+#         sourceImageName: '$(Build.Repository.Name)'
+#         sourceImageTag: '$(Build.BuildNumber)'
+#         repositoryName: '$(Build.Repository.Name)'
+#         pushTag: '$(Build.BuildNumber)'
+#         autoCreateRepository: true
+#         forceDockerNamingConventions: true
 
-    - task: ECRPushImage@1
-      displayName: Push the image to the AWS ECR
-      inputs:
-        awsCredentials: 'AWS-Connection-1'
-        regionName: '$(AWS_Region)'
-        imageSource: 'imagename'
-        sourceImageName: '$(Build.Repository.Name)'
-        sourceImageTag: '$(Build.BuildNumber)'
-        repositoryName: '$(Build.Repository.Name)'
-        pushTag: '$(Build.BuildNumber)'
-        autoCreateRepository: true
-        forceDockerNamingConventions: true
-
-    - task: CopyFiles@2
-      displayName: Copy application yaml files to the artifacts for release stage
-      inputs:
-        Contents: '**yaml'
-        TargetFolder: '$(build.artifactstagingdirectory)'
+#     - task: CopyFiles@2
+#       displayName: Copy application yaml files to the artifacts for release stage
+#       inputs:
+#         Contents: '**yaml'
+#         TargetFolder: '$(build.artifactstagingdirectory)'
     
-    - task: PublishBuildArtifacts@1
-      displayName: Place the artifacts to the 
-      inputs:
-        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
-        ArtifactName: 'drop'
-        publishLocation: 'Container'
+#     - task: PublishBuildArtifacts@1
+#       displayName: Place the artifacts to the 
+#       inputs:
+#         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+#         ArtifactName: 'drop'
+#         publishLocation: 'Container'
