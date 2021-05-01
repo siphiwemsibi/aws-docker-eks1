@@ -75,6 +75,14 @@ stages:
       pool:
         vmImage: ubuntu-latest
       steps:
+      
+      - task: DownloadBuildArtifacts@0
+        displayName: Download the build artifect
+        inputs:
+          buildType: 'current'
+          downloadType: 'single'
+          artifactName: 'drop'
+          downloadPath: '$(System.ArtifactsDirectory)'
 
       - task: Kubernetes@1
         displayName: Kubectl apply
@@ -83,7 +91,7 @@ stages:
           kubernetesServiceEndpoint: 'AWS-EKS1'
           command: 'apply'
           useConfigurationFile: true
-          configuration: '$(System.DefaultWorkingDirectory)/_aws-docker-eks1/drop/app-manifest.yaml'
+          configuration: '$(System.ArtifactsDirectory)/drop/app-manifest.yaml'
           secretType: 'dockerRegistry'
           containerRegistryType: 'Azure Container Registry'
 
@@ -96,3 +104,5 @@ stages:
           arguments: 'image deployments/deployment-sip-python sip-python=$(ECR_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/siphiwemsibiaws-docker-eks1:$(Build.BuildNumber)'
           secretType: 'dockerRegistry'
           containerRegistryType: 'Azure Container Registry'
+
+      
