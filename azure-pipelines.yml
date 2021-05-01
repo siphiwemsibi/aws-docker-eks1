@@ -11,6 +11,7 @@ resources:
 variables:
   tag: '$(Build.BuildNumber)'
 
+## Build stage
 stages:
 - stage: Build
   displayName: Build Docker Image and push to ECR
@@ -62,3 +63,36 @@ stages:
         PathtoPublish: '$(Build.ArtifactStagingDirectory)'
         ArtifactName: 'drop'
         publishLocation: 'Container'
+
+##Deploy Stage
+- stage: Deploy
+  displayName: Deploy or update the app manifest to AWS EKS
+  dependsOn: Build
+  condition: succeeded('Build')
+  jobs:
+    - job: Deploy
+      displayName: Deploy to AWS EKS
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+
+      - task: Kubernetes@1
+        displayName: Kubectl apply
+        inputs:
+          connectionType: 'Kubernetes Service Connection'
+          kubernetesServiceEndpoint: 'AWS-EKS1'
+          command: 'apply'
+          useConfigurationFile: true
+          configuration: '$(System.DefaultWorkingDirectory)/_aws-docker-eks1/drop/app-manifest.yaml'
+          secretType: 'dockerRegistry'
+          containerRegistryType: 'Azure Container Registry'
+
+      - task: Kubernetes@1
+        displayName: Kubectl set
+        inputs:
+          connectionType: 'Kubernetes Service Connection'
+          kubernetesServiceEndpoint: 'AWS-EKS1'
+          command: 'set'
+          arguments: 'image deployments/deployment-sip-python sip-python=$(ECR_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/siphiwemsibiaws-docker-eks1:$(Build.BuildNumber)'
+          secretType: 'dockerRegistry'
+          containerRegistryType: 'Azure Container Registry'
