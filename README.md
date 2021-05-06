@@ -69,7 +69,7 @@ You are free to clone the repo and retrofit to your requirements, or you can cop
    - Meet the prerequisites 
    - Change the self-defined variables
    - Change the (kubectl set) "arguments" line 104 on the Azure-pipeline file , to your own ECR repo mage
-   - Change the "image" ref to your own ECR repo image
+   - Change the "image" ref line 18 on the app-manifest, to your own ECR repo image
 
    ECR image repo = $(ECR_ID).dkr.ecr.$(AWS_REGION).amazonaws.com/**siphiwemsibiaws-docker-eks1**:$(Build.BuildNumber) replace with your ECR repo 
     
