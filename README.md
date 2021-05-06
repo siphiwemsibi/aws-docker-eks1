@@ -61,7 +61,7 @@ You are free to clone the repo and retrofit to your requirements, or you can cop
 
    - I am using the Azure DevOps Predefined variables[$(Build.BuildNumber), $(Build.Repository.Name)] for automation purposes(Image tagging on the YAML deployment & ECR repo) 
    - I am using self-defined variables[$(AWS_REGION), $(ECR_ID)] for automation purposes. 
-   - I have also enabled Approvals for EKS deployment(continuous deploy)  
+   - I have also enabled Approvals for EKS deployment(continuous delivery)  
 
 
 ## Ok, so how do you use this for testing without changing a lot??
